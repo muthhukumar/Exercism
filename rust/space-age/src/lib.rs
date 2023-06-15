@@ -2,11 +2,11 @@
 // In order to pass the tests you can add-to or change any of this code.
 
 #[derive(Debug)]
-pub struct Duration(u64);
+pub struct Duration(f64);
 
 impl From<u64> for Duration {
     fn from(s: u64) -> Self {
-        Duration(s)
+        Duration(s as f64)
     }
 }
 
@@ -29,20 +29,17 @@ impl Planet for Mercury {
 
         let year_sec = 31557600.0 * earth_years;
 
-        let result = d.0 as f64 / year_sec;
-
-        println!("result = {result}");
-
-        result
+        d.0 / year_sec
     }
 }
+
 impl Planet for Venus {
     fn years_during(d: &Duration) -> f64 {
         let earth_years = 0.61519726;
 
         let year_sec = 31557600.0 * earth_years;
 
-        d.0 as f64 / year_sec
+        d.0 / year_sec
     }
 }
 impl Planet for Earth {
@@ -51,7 +48,7 @@ impl Planet for Earth {
 
         let year_sec = 31557600.0 * earth_years;
 
-        d.0 as f64 / year_sec
+        d.0 / year_sec
     }
 }
 impl Planet for Mars {
@@ -60,7 +57,7 @@ impl Planet for Mars {
 
         let year_sec = 31557600.0 * earth_years;
 
-        d.0 as f64 / year_sec
+        d.0 / year_sec
     }
 }
 impl Planet for Jupiter {
@@ -69,7 +66,7 @@ impl Planet for Jupiter {
 
         let year_sec = 31557600.0 * earth_years;
 
-        d.0 as f64 / year_sec
+        d.0 / year_sec
     }
 }
 impl Planet for Saturn {
@@ -78,7 +75,7 @@ impl Planet for Saturn {
 
         let year_sec = 31557600.0 * earth_years;
 
-        d.0 as f64 / year_sec
+        d.0 / year_sec
     }
 }
 impl Planet for Uranus {
@@ -87,7 +84,7 @@ impl Planet for Uranus {
 
         let year_sec = 31557600.0 * earth_years;
 
-        d.0 as f64 / year_sec
+        d.0 / year_sec
     }
 }
 impl Planet for Neptune {
@@ -96,6 +93,6 @@ impl Planet for Neptune {
 
         let year_sec = 31557600.0 * earth_years;
 
-        d.0 as f64 / year_sec
+        d.0 / year_sec
     }
 }
