@@ -1,80 +1,36 @@
-#[derive(Debug)]
-pub struct Clock {
-    hours: i32,
-    minutes: i32,
-}
+use std::fmt;
 
-impl PartialEq for Clock {
-    fn eq(&self, other: &Self) -> bool {
-        self.to_string() == other.to_string()
-    }
-}
+const MINUTES_PER_HOUR: i32 = 60;
+const MINUTES_PER_DAY: i32 = 1 * 60 * 24;
 
-fn pad_zero(num: i32) -> String {
-    match num {
-        x if x >= 0 && x <= 9 => {
-            format!("0{num}")
-        }
-        x if x < 0 && x >= -9 => {
-            format!("-0{}", x.abs())
-        }
-        _ => num.to_string(),
-    }
-}
+#[derive(Debug, PartialEq, PartialOrd)]
+pub struct Clock(i32);
 
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
-        Clock { hours, minutes }
+        let into_minutes = hours * MINUTES_PER_HOUR;
+
+        let total_minutes = into_minutes + minutes;
+
+        let wrap_within_24_hours = total_minutes % MINUTES_PER_DAY;
+
+        // ensures minutes be positive
+        let pos_24_minutes = wrap_within_24_hours + MINUTES_PER_DAY;
+
+        let wrap_within_24_hours = pos_24_minutes % MINUTES_PER_DAY;
+
+        Clock(wrap_within_24_hours)
     }
 
-    pub fn add_minutes(mut self, minutes: i32) -> Self {
-        self.minutes += minutes;
-
-        self
+    pub fn add_minutes(self, minutes: i32) -> Self {
+        Clock::new(0, self.0 + minutes)
     }
+}
 
-    pub fn to_string(&self) -> String {
-        let mut hours = self.hours;
+impl fmt::Display for Clock {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let minutes = self.0;
 
-        let minutes = {
-            if self.minutes >= 0 {
-                let remainder = self.minutes % 60;
-
-                let quotant = self.minutes / 60;
-
-                hours += quotant;
-
-                pad_zero(remainder)
-            } else {
-                let remainder = self.minutes % 60;
-                let quotant = (-(self.minutes / 60)) + 1;
-
-                hours -= quotant;
-
-                let mut result = 60 - -remainder;
-
-                if result == 60 {
-                    hours += 1;
-
-                    result = 0;
-                }
-
-                pad_zero(result)
-            }
-        };
-
-        let final_hours = {
-            let temp_hours = if hours >= 0 {
-                hours
-            } else {
-                24 - -(hours % 24)
-            };
-
-            let result = temp_hours % 24;
-
-            pad_zero(result)
-        };
-
-        format!("{final_hours}:{minutes}")
+        write!(f, "{:02}:{:02}", minutes / 60, minutes % 60)
     }
 }
