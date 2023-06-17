@@ -6,40 +6,25 @@ pub enum Comparison {
     Unequal,
 }
 
-pub fn sublist<T: PartialEq>(first_list: &[T], second_list: &[T]) -> Comparison {
-    // let (super_set, sub_set) = if second_list.len() > first_list.len() {
-    //     (first_list, second_list)
-    // } else {
-    //     (second_list,first_list)
-    // } ;
-
-    let a_len = first_list.len();
-    let b_len = second_list.len();
-
-    if a_len == b_len && first_list == second_list {
+pub fn sublist<T: PartialEq>(sub_list: &[T], super_list: &[T]) -> Comparison {
+    if sub_list == super_list {
         return Comparison::Equal;
+    }
+
+    let (super_list, sub_list, list_type) = if super_list.len() > sub_list.len() {
+        (super_list, sub_list, Comparison::Sublist)
+    } else {
+        (sub_list, super_list, Comparison::Superlist)
     };
 
-    if b_len > a_len {
-        let end = b_len - a_len + 1;
+    let super_len = super_list.len();
+    let sub_len = sub_list.len();
 
-        for i in 0..end {
-            let a = first_list;
-            let b = &second_list[i..i + a_len];
+    let end = super_len - sub_len + 1;
 
-            if a == b {
-                return Comparison::Sublist;
-            }
-        }
-    } else if a_len > b_len {
-        let end = a_len - b_len + 1;
-        for i in 0..end {
-            let a = second_list;
-            let b = &first_list[i..i + b_len];
-
-            if a == b {
-                return Comparison::Superlist;
-            }
+    for i in 0..end {
+        if sub_list == &super_list[i..i + sub_len] {
+            return list_type;
         }
     }
 
