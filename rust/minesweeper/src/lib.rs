@@ -1,21 +1,11 @@
 const ASTERISK: u8 = b'*';
 
-enum MineFieldTile {
+enum TileState {
     Empty,
     Bomb,
-    NearBomb(i32),
+    Score(i32),
 }
 
-// impl Into<String> for MineFieldTile {
-//     fn into(self) -> String {
-//         match self {
-//             MineFieldTile::NearBomb(count) => count.to_string(),
-//             MineFieldTile::Empty => ' '.to_string(),
-//             MineFieldTile::Bomb => '*'.to_string(),
-//         }
-//     }
-// }
-//
 pub fn annotate(minefield: &[&str]) -> Vec<String> {
     let mut result: Vec<String> = Vec::new();
 
@@ -26,11 +16,11 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
 
         let col = minefield[i].as_bytes();
 
-        let mut col_result: Vec<MineFieldTile> = col
+        let mut col_result: Vec<TileState> = col
             .into_iter()
             .map(|v| match *v {
-                b'*' => MineFieldTile::Bomb,
-                _ => MineFieldTile::Empty,
+                b'*' => TileState::Bomb,
+                _ => TileState::Empty,
             })
             .collect();
 
@@ -128,9 +118,9 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             col_result
                 .iter()
                 .map(|v| match v {
-                    MineFieldTile::NearBomb(count) => count.to_string(),
-                    MineFieldTile::Empty => ' '.to_string(),
-                    MineFieldTile::Bomb => '*'.to_string(),
+                    TileState::Score(count) => count.to_string(),
+                    TileState::Empty => ' '.to_string(),
+                    TileState::Bomb => '*'.to_string(),
                 })
                 .collect(),
         );
@@ -139,10 +129,10 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
     result
 }
 
-fn init_or_inc(col: &mut Vec<MineFieldTile>, idx: usize) {
+fn init_or_inc(col: &mut Vec<TileState>, idx: usize) {
     match col[idx] {
-        MineFieldTile::Empty => col[idx] = MineFieldTile::NearBomb(1),
-        MineFieldTile::NearBomb(count) => col[idx] = MineFieldTile::NearBomb(count + 1),
+        TileState::Empty => col[idx] = TileState::Score(1),
+        TileState::Score(count) => col[idx] = TileState::Score(count + 1),
         _ => {}
     };
 }
