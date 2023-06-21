@@ -1,3 +1,5 @@
+const ASTERISK: u8 = b'*';
+
 enum MineFieldTile {
     Empty,
     Bomb,
@@ -16,8 +18,6 @@ enum MineFieldTile {
 //
 pub fn annotate(minefield: &[&str]) -> Vec<String> {
     let mut result: Vec<String> = Vec::new();
-
-    let asterisk = b'*';
 
     let row = minefield.len();
 
@@ -42,7 +42,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             // right
             if j + 1 <= cols {
                 if let Some(&v) = col.get(j + 1) {
-                    if v == asterisk {
+                    if v == ASTERISK {
                         init_or_inc(&mut col_result, j);
                     }
                 }
@@ -51,7 +51,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             // left
             if j - 1 >= 0 {
                 if let Some(&v) = col.get(j - 1) {
-                    if v == asterisk {
+                    if v == ASTERISK {
                         init_or_inc(&mut col_result, j);
                     }
                 }
@@ -61,7 +61,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             if i - 1 >= 0 {
                 if let Some(field) = minefield.get(i - 1) {
                     if let Some(field_as_byte) = field.as_bytes().get(j) {
-                        if *field_as_byte == asterisk {
+                        if *field_as_byte == ASTERISK {
                             init_or_inc(&mut col_result, j);
                         }
                     }
@@ -72,7 +72,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             if i + 1 <= row {
                 if let Some(field) = minefield.get(i + 1) {
                     if let Some(field_as_byte) = field.as_bytes().get(j) {
-                        if *field_as_byte == asterisk {
+                        if *field_as_byte == ASTERISK {
                             init_or_inc(&mut col_result, j);
                         }
                     }
@@ -83,7 +83,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             if i - 1 >= 0 && j - 1 >= 0 {
                 if let Some(field) = minefield.get(i - 1) {
                     if let Some(field_as_byte) = field.as_bytes().get(j - 1) {
-                        if *field_as_byte == asterisk {
+                        if *field_as_byte == ASTERISK {
                             init_or_inc(&mut col_result, j);
                         }
                     }
@@ -94,7 +94,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             if i - 1 <= row && j + 1 <= cols {
                 if let Some(field) = minefield.get(i - 1) {
                     if let Some(field_as_byte) = field.as_bytes().get(j + 1) {
-                        if *field_as_byte == asterisk {
+                        if *field_as_byte == ASTERISK {
                             init_or_inc(&mut col_result, j);
                         }
                     }
@@ -105,7 +105,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             if i + 1 <= row && j - 1 >= 0 {
                 if let Some(field) = minefield.get(i + 1) {
                     if let Some(field_as_byte) = field.as_bytes().get(j - 1) {
-                        if *field_as_byte == asterisk {
+                        if *field_as_byte == ASTERISK {
                             init_or_inc(&mut col_result, j);
                         }
                     }
@@ -116,7 +116,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             if i + 1 <= row && j + 1 <= cols {
                 if let Some(field) = minefield.get(i + 1) {
                     if let Some(field_as_byte) = field.as_bytes().get(j + 1) {
-                        if *field_as_byte == asterisk {
+                        if *field_as_byte == ASTERISK {
                             init_or_inc(&mut col_result, j);
                         }
                     }
