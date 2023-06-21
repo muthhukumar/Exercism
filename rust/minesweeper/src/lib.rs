@@ -1,8 +1,23 @@
+enum MineFieldTile {
+    Empty,
+    Bomb,
+    NearBomb(i32),
+}
+
+// impl Into<String> for MineFieldTile {
+//     fn into(self) -> String {
+//         match self {
+//             MineFieldTile::NearBomb(count) => count.to_string(),
+//             MineFieldTile::Empty => ' '.to_string(),
+//             MineFieldTile::Bomb => '*'.to_string(),
+//         }
+//     }
+// }
+//
 pub fn annotate(minefield: &[&str]) -> Vec<String> {
     let mut result: Vec<String> = Vec::new();
 
     let asterisk = b'*';
-    let space = b' ';
 
     let row = minefield.len();
 
@@ -11,16 +26,14 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
 
         let col = minefield[i].as_bytes();
 
-        let mut col_result: Vec<i32> = col
+        let mut col_result: Vec<MineFieldTile> = col
             .into_iter()
             .map(|v| {
                 if *v == asterisk {
-                    return asterisk as i32;
-                } else if *v == space {
-                    return space as i32;
+                    return MineFieldTile::Bomb;
                 } else {
-                    return 0;
-                }
+                    return MineFieldTile::Empty;
+                };
             })
             .collect();
 
@@ -47,56 +60,92 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
                 }
             }
 
-            // // top
-            // if i - 1 >= 0 && minefield[i - 1].as_bytes()[j] == asterisk {
-            //     init_or_inc(&mut col_result, j);
-            // }
-            //
-            // // bottom
-            // if i + 1 <= row && minefield[i + 1].as_bytes()[j] == asterisk {
-            //     init_or_inc(&mut col_result, j);
-            // }
-            //
-            // // top left
-            // if i - 1 >= 0 && j - 1 >= 0 && minefield[i - 1].as_bytes()[j - 1] == asterisk {
-            //     init_or_inc(&mut col_result, j);
-            // }
-            //
-            // // top right
-            // if i - 1 <= row && j + 1 <= cols && minefield[i - 1].as_bytes()[j + 1] == asterisk {
-            //     init_or_inc(&mut col_result, j);
-            // }
-            //
-            // // bottom left
-            // if i + 1 <= row && j - 1 >= 0 && minefield[i + 1].as_bytes()[j - 1] == asterisk {
-            //     init_or_inc(&mut col_result, j);
-            // }
-            //
-            // // bottom right
-            // if i + 1 <= row && j + 1 <= cols && minefield[i + 1].as_bytes()[j + 1] == asterisk {
-            //     init_or_inc(&mut col_result, j);
-            // }
-        }
+            // top
+            if i - 1 >= 0 {
+                if let Some(field) = minefield.get(i - 1) {
+                    if let Some(field_as_byte) = field.as_bytes().get(j) {
+                        if *field_as_byte == asterisk {
+                            init_or_inc(&mut col_result, j);
+                        }
+                    }
+                }
+            }
 
-        println!("result: {:?}", col_result);
+            // bottom
+            if i + 1 <= row {
+                if let Some(field) = minefield.get(i + 1) {
+                    if let Some(field_as_byte) = field.as_bytes().get(j) {
+                        if *field_as_byte == asterisk {
+                            init_or_inc(&mut col_result, j);
+                        }
+                    }
+                }
+            }
+
+            // top left
+            if i - 1 >= 0 && j - 1 >= 0 {
+                if let Some(field) = minefield.get(i - 1) {
+                    if let Some(field_as_byte) = field.as_bytes().get(j - 1) {
+                        if *field_as_byte == asterisk {
+                            init_or_inc(&mut col_result, j);
+                        }
+                    }
+                }
+            }
+
+            // top right
+            if i - 1 <= row && j + 1 <= cols {
+                if let Some(field) = minefield.get(i - 1) {
+                    if let Some(field_as_byte) = field.as_bytes().get(j + 1) {
+                        if *field_as_byte == asterisk {
+                            init_or_inc(&mut col_result, j);
+                        }
+                    }
+                }
+            }
+
+            // bottom left
+            if i + 1 <= row && j - 1 >= 0 {
+                if let Some(field) = minefield.get(i + 1) {
+                    if let Some(field_as_byte) = field.as_bytes().get(j - 1) {
+                        if *field_as_byte == asterisk {
+                            init_or_inc(&mut col_result, j);
+                        }
+                    }
+                }
+            }
+
+            // bottom right
+            if i + 1 <= row && j + 1 <= cols {
+                if let Some(field) = minefield.get(i + 1) {
+                    if let Some(field_as_byte) = field.as_bytes().get(j + 1) {
+                        if *field_as_byte == asterisk {
+                            init_or_inc(&mut col_result, j);
+                        }
+                    }
+                }
+            }
+        }
 
         result.push(
             col_result
-                .into_iter()
-                .map(|v| char::from(v))
-                .map(|v| v.to_string())
-                .collect::<String>(),
+                .iter()
+                .map(|v| match v {
+                    MineFieldTile::NearBomb(count) => count.to_string(),
+                    MineFieldTile::Empty => ' '.to_string(),
+                    MineFieldTile::Bomb => '*'.to_string(),
+                })
+                .collect(),
         );
     }
 
     result
 }
 
-fn init_or_inc(col: &mut Vec<i32>, idx: usize) {
-    println!("idx: {}, col: {}", idx, col[idx]);
-    if col[idx] != 32 {
-        col[idx] = col[idx] + 1;
-    } else {
-        col[idx] = 0;
-    }
+fn init_or_inc(col: &mut Vec<MineFieldTile>, idx: usize) {
+    match col[idx] {
+        MineFieldTile::Empty => col[idx] = MineFieldTile::NearBomb(1),
+        MineFieldTile::NearBomb(count) => col[idx] = MineFieldTile::NearBomb(count + 1),
+        _ => {}
+    };
 }
