@@ -28,12 +28,9 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
 
         let mut col_result: Vec<MineFieldTile> = col
             .into_iter()
-            .map(|v| {
-                if *v == asterisk {
-                    return MineFieldTile::Bomb;
-                } else {
-                    return MineFieldTile::Empty;
-                };
+            .map(|v| match *v {
+                b'*' => MineFieldTile::Bomb,
+                _ => MineFieldTile::Empty,
             })
             .collect();
 
