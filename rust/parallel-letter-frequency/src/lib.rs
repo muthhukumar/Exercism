@@ -2,9 +2,6 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex, RwLock};
 use std::thread;
 
-// TODO - use a separate thread for sending message. This thread should convert the input like
-// lowercase and send that result to other thread for calcuation.
-
 fn str_char_count(str: &str, count: &mut HashMap<char, usize>) {
     for c in str
         .chars()
@@ -27,36 +24,37 @@ pub fn frequency_without_worker(input: &[&str], _worker_count: usize) -> HashMap
     char_count
 }
 
-pub fn frequency(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
+fn cal_thread_work(no_of_thread: usize, no_of_works: usize) -> Vec<[usize; 2]> {
+    let work_per_thread = no_of_works / no_of_thread;
+    let remainder = no_of_works % no_of_thread;
+
+    let mut i = 0;
     let mut works = vec![];
 
-    let mut start = 0;
-    if input.len() >= worker_count {
-        for i in 1..worker_count + 1 {
-            let work_count = {
-                if input.len() % worker_count == 0 {
-                    input.len() / worker_count
-                } else {
-                    if i == worker_count {
-                        (input.len() / worker_count) + (input.len() % worker_count)
-                    } else {
-                        input.len() / worker_count
-                    }
-                }
-            };
+    while i < no_of_works {
+        let start = i;
 
-            works.push([start, start + work_count]);
+        let end = no_of_works.min(i + (work_per_thread));
 
-            start = start + work_count;
+        if (end + remainder) == no_of_works {
+            works.push([start, end + remainder]);
+
+            return works;
         }
-    } else {
-        works.push([0, input.len()]);
+
+        works.push([start, end]);
+
+        i += work_per_thread;
     }
 
-    let input = input.clone().to_owned();
+    works
+}
+
+pub fn frequency(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
+    let works = cal_thread_work(worker_count, input.len());
 
     let tf_input: Arc<RwLock<Vec<String>>> =
-        Arc::new(RwLock::new(input.iter().map(|s| s.to_string()).collect()));
+        Arc::new(RwLock::new(input.iter().map(|v| v.to_string()).collect()));
 
     let char_count: Arc<Mutex<HashMap<char, usize>>> = Arc::new(Mutex::new(HashMap::new()));
 
@@ -68,6 +66,7 @@ pub fn frequency(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
 
         let handle = thread::spawn(move || {
             let input = cloned_tf_input.read().unwrap();
+
             if let Some(val) = input.get(start..end) {
                 for str in val {
                     let mut char_count = char_count.lock().unwrap();
