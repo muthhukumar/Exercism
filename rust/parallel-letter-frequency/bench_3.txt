@@ -1,0 +1,16 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 6 tests
+test bench_large_parallel   ... bench:     668,363 ns/iter (+/- 46,391)
+test bench_large_sequential ... bench:     346,541 ns/iter (+/- 409,804)
+test bench_small_parallel   ... bench:      66,422 ns/iter (+/- 79,070)
+test bench_small_sequential ... bench:      11,135 ns/iter (+/- 4,114)
+test bench_tiny_parallel    ... bench:      18,908 ns/iter (+/- 11,709)
+test bench_tiny_sequential  ... bench:          51 ns/iter (+/- 16)
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 6 measured; 0 filtered out; finished in 21.53s
+

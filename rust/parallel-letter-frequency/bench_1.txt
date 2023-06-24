@@ -1,0 +1,19 @@
+note:
+1. Initial version everything is copied
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 6 tests
+test bench_large_parallel   ... bench:     380,502 ns/iter (+/- 20,990)
+test bench_large_sequential ... bench:     273,655 ns/iter (+/- 78,010)
+test bench_small_parallel   ... bench:      54,635 ns/iter (+/- 3,295)
+test bench_small_sequential ... bench:      11,134 ns/iter (+/- 5,002)
+test bench_tiny_parallel    ... bench:      16,874 ns/iter (+/- 1,080)
+test bench_tiny_sequential  ... bench:          49 ns/iter (+/- 4)
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 6 measured; 0 filtered out; finished in 21.05s
+
