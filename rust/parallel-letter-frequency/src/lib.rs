@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, RwLock};
 use std::thread;
 
 fn str_char_count(str: &str, count: &mut HashMap<char, usize>) {
@@ -56,7 +56,7 @@ pub fn frequency(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
     let tf_input: Arc<RwLock<Vec<String>>> =
         Arc::new(RwLock::new(input.iter().map(|v| v.to_string()).collect()));
 
-    let char_count: Arc<Mutex<HashMap<char, usize>>> = Arc::new(Mutex::new(HashMap::new()));
+    let char_count: Arc<RwLock<HashMap<char, usize>>> = Arc::new(RwLock::new(HashMap::new()));
 
     let mut handles = vec![];
 
@@ -69,7 +69,7 @@ pub fn frequency(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
 
             if let Some(val) = input.get(start..end) {
                 for str in val {
-                    let mut char_count = char_count.lock().unwrap();
+                    let mut char_count = char_count.write().unwrap();
                     str_char_count(str, &mut char_count);
                 }
             };
@@ -82,7 +82,7 @@ pub fn frequency(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
         handle.join().unwrap();
     }
 
-    let x = char_count.lock().unwrap().to_owned();
+    let x = char_count.read().unwrap().to_owned();
 
     x
 }
