@@ -5,16 +5,12 @@ pub fn factors(n: u64) -> Vec<u64> {
 
     let mut num: u64 = n;
 
-    let range = (2..=end).into_iter();
-
-    range.fold(&mut result, |acc, i| {
+    for i in 2..=end {
         while num % i == 0 {
-            acc.push(i);
-            num = num / i;
+            result.push(i);
+            num /= i;
         }
-
-        acc
-    });
+    }
 
     if num > 1 {
         result.push(num);
