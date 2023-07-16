@@ -6,8 +6,10 @@ pub fn sum_of_multiples(limit: u32, factors: &[u32]) -> u32 {
     for f in factors {
         let mut i = *f;
 
-        while i < limit {
-            mul_of_factors.insert(i);
+        while i < limit && i != 0 {
+            if !mul_of_factors.contains(&i) {
+                mul_of_factors.insert(i);
+            }
 
             i += *f;
         }
