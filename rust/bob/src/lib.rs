@@ -1,26 +1,28 @@
 pub fn reply(message: &str) -> &str {
-    let message_char: Vec<char> = message.chars().filter(|c| !c.is_whitespace()).collect();
+    let char: Vec<char> = message
+        .chars()
+        .filter(|c| !c.is_whitespace() || c.is_alphabetic() || *c == '?')
+        .collect();
 
-    if message_char.len() == 0 {
+    if char.len() == 0 {
         return "Fine. Be that way!";
     }
 
-    let mes = message_char.iter().filter(|c| c.is_alphabetic());
+    let last_char = *char.last().unwrap();
 
-    if mes.clone().all(|c| c.is_uppercase())
-        && *message_char.last().unwrap() == '?'
-        && mes.count() > 0
-    {
-        return "Calm down, I know what I'm doing!";
+    let alpha_char: Vec<&char> = char.iter().filter(|c| c.is_alphabetic()).collect();
+
+    if alpha_char.iter().all(|c| c.is_uppercase()) {
+        if alpha_char.len() > 0 {
+            if last_char == '?' {
+                return "Calm down, I know what I'm doing!";
+            } else {
+                return "Whoa, chill out!";
+            }
+        }
     }
 
-    let mes = message_char.iter().filter(|c| c.is_alphabetic());
-
-    if mes.clone().all(|c| c.is_uppercase()) && mes.count() > 0 {
-        return "Whoa, chill out!";
-    }
-
-    if *message_char.last().unwrap() == '?' {
+    if last_char == '?' {
         return "Sure.";
     }
 
