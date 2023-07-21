@@ -1,24 +1,34 @@
 pub fn reply(message: &str) -> &str {
-    let message: Vec<char> = message.chars().collect();
+    let message: Vec<char> = message.chars().filter(|c| !c.is_whitespace()).collect();
 
-    println!("Input: {:?}", message);
+    println!("{:?}", message);
 
-    if message.iter().all(|c| c.is_whitespace()) {
+    if message.len() == 0 {
         return "Fine. Be that way!";
-    } else if message
+    }
+
+    if message
         .iter()
-        .all(|c| c.is_numeric() || c.is_uppercase() || !c.is_alphanumeric() && *c != '?')
+        .filter(|c| c.is_alphabetic())
+        .all(|c| c.is_uppercase())
+        && !message.iter().any(|c| *c == '?')
+        && message.iter().filter(|c| c.is_alphabetic()).count() > 0
     {
         return "Whoa, chill out!";
-    } else if message.iter().all(|c| c.is_uppercase() || *c == '?') {
+    }
+
+    if message
+        .iter()
+        .filter(|c| c.is_alphabetic())
+        .all(|c| c.is_uppercase())
+        && *message.last().unwrap() == '?'
+        && message.iter().filter(|c| c.is_alphabetic()).count() > 0
+    {
         return "Calm down, I know what I'm doing!";
     }
 
-    if let Some(last) = message.iter().filter(|c| c.is_whitespace()).last() {
-        if *last == '?' {
-            println!("list: {}", *last);
-            return "Sure.";
-        }
+    if *message.last().unwrap() == '?' {
+        return "Sure.";
     }
 
     return "Whatever.";
